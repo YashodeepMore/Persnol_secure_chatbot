@@ -30,3 +30,13 @@ class DataIngistionConfig:
         self.sms_dir : str = os.path.join(self.raw_data_dir,message_pipeline.RAW_SMS_DIR_NAME)
         self.email_dir : str = os.path.join(self.raw_data_dir,message_pipeline.RAW_EMAIL_DIR_NAME)
         
+
+class DataPreprocessingConfig:
+    def __init__(self,project_pipeline_config: ProjectPipelineConfig):
+        self.preprocessed_data_dir :str = os.path.join(
+            project_pipeline_config.artifact_dir,message_pipeline.DATA_INGESTION_DIR_NAME,message_pipeline.PROCESSED_DATA_DIR_NAME
+        )
+
+        self.raw_data_dir :str = os.path.join(project_pipeline_config.raw_data_dir,"sample_messages")
+        self.sms_dir : str = os.path.join(self.raw_data_dir,message_pipeline.RAW_SMS_DIR_NAME)
+        self.email_dir : str = os.path.join(self.raw_data_dir,message_pipeline.RAW_EMAIL_DIR_NAME)

@@ -6,6 +6,8 @@ from src.exception.exception import Project_Exception
 
 from src.entity.config_entity import DataIngistionConfig, ProjectPipelineConfig
 
+from src.utils.preprocessor import preprocess_text,analyze_sms, analyze_email
+
 
 class DataIngestion:
     """
@@ -42,13 +44,18 @@ class DataIngestion:
 
             formatted_sms = []
             for msg in sms_data:
-                formatted_sms.append({
-                    "type": "sms",
+                # formatted_sms.append({
+                #     "type": "sms",
+                #     "sender": msg.get("sender"),
+                #     "subject": None,
+                #     "body": msg.get("text"),
+                #     "timestamp": msg.get("timestamp")
+                # })
+                formatted_sms.append(analyze_sms({
                     "sender": msg.get("sender"),
-                    "subject": None,
                     "body": msg.get("text"),
                     "timestamp": msg.get("timestamp")
-                })
+                }))
 
             # Save processed SMS
             
@@ -79,13 +86,19 @@ class DataIngestion:
 
             formatted_emails = []
             for mail in email_data:
-                formatted_emails.append({
-                    "type": "email",
+                # formatted_emails.append({
+                #     "type": "email",
+                #     "sender": mail.get("from"),
+                #     "subject": mail.get("subject"),
+                #     "body": mail.get("body"),
+                #     "timestamp": mail.get("date")
+                # })
+                formatted_emails.append(analyze_email({
                     "sender": mail.get("from"),
                     "subject": mail.get("subject"),
                     "body": mail.get("body"),
                     "timestamp": mail.get("date")
-                })
+                }))
 
             # Save processed emails
 
