@@ -18,6 +18,7 @@ class ProjectPipelineConfig:
 
 class DataIngistionConfig:
     def __init__(self, project_pipeline_config: ProjectPipelineConfig):
+        self.artifact_dir = project_pipeline_config.artifact_dir
         self.data_ingestion_dir : str=os.path.join(
             project_pipeline_config.artifact_dir, message_pipeline.DATA_INGESTION_DIR_NAME
         )

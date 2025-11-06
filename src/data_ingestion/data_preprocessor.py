@@ -4,6 +4,7 @@ import sys
 from src.logging.logger import logging
 from src.exception.exception import Project_Exception
 
+from src.entity.artifact_entity import DataIngestionArtifact
 from src.entity.config_entity import DataIngistionConfig, ProjectPipelineConfig
 
 from src.utils.preprocessor import preprocess_text,analyze_sms, analyze_email
@@ -111,6 +112,19 @@ class DataIngestion:
 
         except Exception as e:
             raise Project_Exception(e, sys)
+        
+    def initiate_dataingestion(self):
+        try:
+            sms_path = self.read_sms_messages()
+            email_path = self.read_email_messages()
+            processed_data_dir = self.data_ingestion_config.processed_data_dir
+            artifact_dir = self.data_ingestion_config.artifact_dir
+
+            data_ingestion_artifact = DataIngestionArtifact(sms_path,email_path,processed_data_dir,artifact_dir)
+            return data_ingestion_artifact
+        except Exception as e:
+            raise Project_Exception(e,sys)
+
 
 
 if __name__ == "__main__":
