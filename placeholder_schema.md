@@ -1,7 +1,4 @@
-Here is a clean, ready-to-paste **Markdown Placeholder Masking Schema Document**.
-Copy → Paste into your markdown file.
 
----
 
 # 📄 **Unique Placeholder Masking Schema (v1)**
 
@@ -134,7 +131,3 @@ This masking system allows:
 * Safe cloud LLM usage
 * Multi-message reasoning (summation, comparison, etc.)
 * Local reconstruction of final answers
-
----
-
-If you want, I can also generate a **prompt template document** in the same clean markdown format.
