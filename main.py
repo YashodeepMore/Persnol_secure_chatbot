@@ -33,6 +33,26 @@ if __name__=="__main__":
         query_emb = embedder.generate_embeddings([query])
         results = store.search(query_emb, top_k=3)
 
+        
+
+        logging.info("\nTop Matches:\n")
+        for r in results:
+            logging.info(f"{r['rank']}. {r['text']}")
+            logging.info(f"   Type: {r['metadata']['type']}, Distance: {r['distance']:.3f}\n")
+
+        new_message = {
+            "sender": "Google Pay",
+            "timestamp": "2025-11-07T10:05:00",
+            "text": "Payment of Rs. 250 to Rajesh for dinner was successful. Ref ID: GP281105.",
+            "type": "transaction",
+            "details": {"amount": 250, "action": "debited"}
+        }
+
+        store.add_new_message(new_message, embedder)
+        query = input("Enter your search query: ")
+        query_emb = embedder.generate_embeddings([query])
+        results = store.search(query_emb, top_k=3)
+
         logging.info("\nTop Matches:\n")
         for r in results:
             logging.info(f"{r['rank']}. {r['text']}")

@@ -151,3 +151,77 @@ class VectorStore:
             return results
         except Exception as e:
             raise Project_Exception(e,sys)
+        
+        # ----------------------------------------------------------------
+    # 6️⃣ Add new message dynamically (real-time update simulation)
+    # ----------------------------------------------------------------
+    def add_new_message(self, new_message: dict, embedder):
+        """
+        Simulates real-time addition of a new SMS or Email.
+        This can later be replaced with a real-time listener.
+
+        Parameters:
+        - new_message (dict): A message dictionary (like from sms.json or email.json)
+        - embedder: Instance of your EmbeddingGenerator class
+        """
+        try:
+            # Ensure index is loaded
+            if self.index is None:
+                self.load_index()
+
+            # 1️⃣ Identify and prepare text + metadata
+            if "text" in new_message:  # SMS
+                text = f"SMS from {new_message.get('sender', 'Unknown')}: {new_message.get('text', '')}"
+                meta = {
+                    "source": "sms",
+                    "sender": new_message.get("sender"),
+                    "timestamp": new_message.get("timestamp"),
+                    "type": new_message.get("type"),
+                    "details": new_message.get("details", {})
+                }
+            elif "body" in new_message:  # Email
+                subject = new_message.get("subject", "")
+                body = new_message.get("body", "")
+                text = f"Email from {new_message.get('from', 'Unknown')} about '{subject}': {body}"
+                meta = {
+                    "source": "email",
+                    "from": new_message.get("from"),
+                    "date": new_message.get("date"),
+                    "type": new_message.get("type"),
+                    "details": new_message.get("details", {})
+                }
+            else:
+                logging.warning("[WARN] Unrecognized message format, skipping addition.")
+                return
+
+            # 2️⃣ Generate embedding for new message
+            new_embedding = embedder.generate_embeddings([text])
+            new_embedding = np.array(new_embedding).astype('float32')
+
+            # 3️⃣ Add to FAISS index
+            self.index.add(new_embedding)
+            faiss.write_index(self.index, os.path.join(self.index_dir, "index.faiss"))
+
+            # 4️⃣ Append message and metadata
+            self.messages.append(text)
+            self.metadata.append(meta)
+
+            # 5️⃣ Save updated data
+            np.save(os.path.join(self.index_dir, "embeddings.npy"),
+                    np.vstack([self.embeddings, new_embedding]) if self.embeddings is not None else new_embedding)
+            with open(os.path.join(self.index_dir, "messages.json"), "w", encoding="utf-8") as f:
+                json.dump(self.messages, f, ensure_ascii=False, indent=2)
+            with open(os.path.join(self.index_dir, "metadata.json"), "w", encoding="utf-8") as f:
+                json.dump(self.metadata, f, ensure_ascii=False, indent=2)
+
+            # Update in-memory embeddings too
+            if self.embeddings is not None:
+                self.embeddings = np.vstack([self.embeddings, new_embedding])
+            else:
+                self.embeddings = new_embedding
+
+            logging.info(f"[INFO] New message added and index updated successfully: {text[:80]}...")
+
+        except Exception as e:
+            raise Project_Exception(e, sys)
+
