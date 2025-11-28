@@ -44,7 +44,7 @@ Give final answer in 1–2 sentences.
 data = {
     "model": "kwaipilot/kat-coder-pro:free",
     "messages": [
-        {"role": "user", "content": content}     #"What is the meaning of life in 10 words?"
+        {"role": "user", "content": content}   
     ]
 }
 
